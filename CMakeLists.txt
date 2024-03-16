@@ -8,6 +8,7 @@
 set(srcs
   src/Digit_Display.cpp
   src/TM1637.cpp
+  src/MBI5026.cpp
   )
 
 set(includedirs src/)
