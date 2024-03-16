@@ -1,5 +1,5 @@
 /*
- * TM1637.h
+ * MBI5026.h
  * A library for the 4 digit display
  *
  * Copyright (c) 2012 seeed technology inc.
@@ -29,70 +29,55 @@
  * THE SOFTWARE.
  */
 
-#ifndef TM1637_h
-#define TM1637_h
+#ifndef MBI5026_h
+#define MBI5026_h
 #include <inttypes.h>
 #include <Arduino.h>
 
 #include "Digit_Display.h"
-//************definitions for TM1637*********************
-#define ADDR_AUTO  0x40
-#define ADDR_FIXED 0x44
 
-#define STARTADDR  0xc0
 
-/**************definitions for brightness***********************/
-#define  BRIGHT_DARKEST 0
-#define  BRIGHT_TYPICAL 2
-#define  BRIGHTEST      7
-
-class TM1637 : public Digit_Display 
+class MBI5026 : public Digit_Display 
 {
   public:
-    uint8_t Cmd_SetData;
-    uint8_t Cmd_SetAddr;
-    uint8_t Cmd_DispCtrl;
 
-    TM1637(uint8_t, uint8_t,uint8_t = 4);
+
+    MBI5026(uint8_t, uint8_t,uint8_t,uint8_t = 4);
 	
-	int writeByte(int8_t wr_data);
-	void start(void);
-	void stop(void);
+	void writeByte(int8_t wr_data);
+	void latch(void);
 	
     virtual void  refresh(uint8_t BitAddr,int8_t wr_data)//write 8bit data
 	{
-	  start();          //start signal sent to TM1637 from MCU
-	  writeByte(ADDR_FIXED);//
-	  stop();           //
-	  start();          //
-	  writeByte(BitAddr|STARTADDR);//
-	  writeByte(wr_data);//
-	  stop();            //
-	  start();          //
-	  writeByte(Cmd_DispCtrl);//
-	  stop();           //
+		uint8_t i;
+	  dataBuffer[BitAddr] = wr_data;
+	   for(i=0;i < dataBufferSize;i ++)
+	  {
+		writeByte(dataBuffer[i]);        //
+	  }
+	  latch();           //       //	
 	}
     virtual void  refresh(int8_t wr_data[],int8_t wr_size)
 	{
 	  uint8_t i;
-	  start();          //start signal sent to TM1637 from MCU
-	  writeByte(ADDR_AUTO);//
-	  stop();           //
-	  start();          //
-	  writeByte(Cmd_SetAddr);//
 	  for(i=0;i < wr_size;i ++)
 	  {
-		writeByte(wr_data[i]);        //
+		dataBuffer[i] = wr_data[i];        //
 	  }
-	  stop();           //
-	  start();          //
-	  writeByte(Cmd_DispCtrl);//
-	  stop();           //	
+	  for(i=0;i < wr_size;i ++)
+	  {
+		writeByte(dataBuffer[i]);        //
+	  }
+	  latch();           //       //	
 	}
-    void set(uint8_t = BRIGHT_TYPICAL,uint8_t = ADDR_AUTO,uint8_t = STARTADDR);//To take effect the next time it displays.
-
+	~MBI5026() {
+		delete [] dataBuffer;
+	};
   private:
     uint8_t Clkpin;
     uint8_t Datapin;
+	uint8_t Latchpin;
+	int8_t *dataBuffer;
+	uint8_t dataBufferSize;
 };
 #endif

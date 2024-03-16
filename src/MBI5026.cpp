@@ -1,5 +1,5 @@
 /*
- * Digit_Display.h
+ * MBI5026.cpp
  * A library for the 4 digit display
  *
  * Copyright (c) 2012 seeed technology inc.
@@ -29,34 +29,43 @@
  * THE SOFTWARE.
  */
 
-#ifndef Digit_Display_h
-#define Digit_Display_h
-
-#include <inttypes.h>
+#include "MBI5026.h"
 #include <Arduino.h>
 
-
-/**** definitions for the clock point of the digit tube *******/
-#define POINT_ON   1
-#define POINT_OFF  0
-
-class Digit_Display
+MBI5026::MBI5026(uint8_t Clk, uint8_t Data, uint8_t Latch,uint8_t Bits)
 {
-  public:
-    boolean _PointFlag;     //_PointFlag=1:the clock point on
-    void init(uint8_t = 4);        //To clear the display
-    virtual void  refresh(uint8_t BitAddr,int8_t wr_data) = 0;//write 8bit data
-    virtual void  refresh(int8_t wr_data[],int8_t wr_size) = 0;//write all data
-    void display(int8_t DispData[]);
-    void display(uint8_t BitAddr,int8_t DispData);
-    void clearDisplay(void);
-    void point(boolean PointFlag);//whether to light the clock point ":".To take effect the next time it displays.
-    void coding(int8_t DispData[]);
-    int8_t coding(int8_t DispData);
-    void bitDelay(void);
-	virtual ~Digit_Display() {};
-  private:
-	uint8_t Digitbits;
+  Clkpin = Clk;
+  Datapin = Data;
+  Latchpin = Data;
+  pinMode(Clkpin,OUTPUT);
+  pinMode(Datapin,OUTPUT);
+  pinMode(Latchpin,OUTPUT);
+  init(Bits);
+  dataBufferSize = Bits;
+  dataBuffer = new int8_t[dataBufferSize];
+}
 
-};
-#endif
+void MBI5026::writeByte(int8_t wr_data)
+{
+  uint8_t i;
+  for(i=0;i<8;i++)        //sent 8bit data
+  {
+    digitalWrite(Clkpin,LOW);
+    if(wr_data & 0x01)digitalWrite(Datapin,HIGH);//LSB first
+    else digitalWrite(Datapin,LOW);
+	wr_data >>= 1;
+	bitDelay();
+    digitalWrite(Clkpin,HIGH);
+	bitDelay();
+  }
+  
+}
+//send start signal to MBI5026
+void MBI5026::latch(void)
+{
+  digitalWrite(Latchpin,LOW);//send start signal to MBI5026
+  digitalWrite(Latchpin,HIGH);
+  digitalWrite(Latchpin,LOW);
+}
+
+
