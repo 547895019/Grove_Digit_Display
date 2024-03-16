@@ -53,7 +53,7 @@ class MBI5026 : public Digit_Display
 	  dataBuffer[BitAddr] = wr_data;
 	   for(i=0;i < dataBufferSize;i ++)
 	  {
-		writeByte(dataBuffer[i]);        //
+		writeByte(dataBuffer[dataBufferSize - i - 1]);        //
 	  }
 	  latch();           //       //	
 	}
@@ -66,7 +66,7 @@ class MBI5026 : public Digit_Display
 	  }
 	  for(i=0;i < wr_size;i ++)
 	  {
-		writeByte(dataBuffer[i]);        //
+		writeByte(dataBuffer[dataBufferSize - i - 1]);        //
 	  }
 	  latch();           //       //	
 	}
