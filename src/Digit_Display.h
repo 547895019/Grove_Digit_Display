@@ -44,7 +44,8 @@ class Digit_Display
 {
   public:
     boolean _PointFlag;     //_PointFlag=1:the clock point on
-    void init(uint8_t = 4);        //To clear the display
+    void init(void);        //To clear the display
+	void digitbits(uint8_t Bits);
     virtual void  refresh(uint8_t BitAddr,int8_t wr_data) = 0;//write 8bit data
     virtual void  refresh(int8_t wr_data[],int8_t wr_size) = 0;//write all data
     void display(int8_t DispData[]);
@@ -53,7 +54,7 @@ class Digit_Display
     void point(boolean PointFlag);//whether to light the clock point ":".To take effect the next time it displays.
     void coding(int8_t DispData[]);
     int8_t coding(int8_t DispData);
-    void bitDelay(void);
+    void bitDelay(uint32_t = 50);
 	virtual ~Digit_Display() {};
   private:
 	uint8_t Digitbits;

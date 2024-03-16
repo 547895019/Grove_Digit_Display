@@ -39,7 +39,7 @@ TM1637::TM1637(uint8_t Clk, uint8_t Data, uint8_t Bits)
   pinMode(Clkpin,OUTPUT);
   pinMode(Datapin,OUTPUT);
   set(BRIGHT_TYPICAL,ADDR_AUTO,STARTADDR);
-  init(Bits);
+  digitbits(Bits);
 }
 
 int TM1637::writeByte(int8_t wr_data)

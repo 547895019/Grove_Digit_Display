@@ -36,11 +36,11 @@ MBI5026::MBI5026(uint8_t Clk, uint8_t Data, uint8_t Latch,uint8_t Bits)
 {
   Clkpin = Clk;
   Datapin = Data;
-  Latchpin = Data;
+  Latchpin = Latch;
   pinMode(Clkpin,OUTPUT);
   pinMode(Datapin,OUTPUT);
   pinMode(Latchpin,OUTPUT);
-  init(Bits);
+  digitbits(Bits);
   dataBufferSize = Bits;
   dataBuffer = new int8_t[dataBufferSize];
 }
@@ -51,12 +51,10 @@ void MBI5026::writeByte(int8_t wr_data)
   for(i=0;i<8;i++)        //sent 8bit data
   {
     digitalWrite(Clkpin,LOW);
-    if(wr_data & 0x01)digitalWrite(Datapin,HIGH);//LSB first
+    if(wr_data & 0x80)digitalWrite(Datapin,HIGH);//LSB first
     else digitalWrite(Datapin,LOW);
-	wr_data >>= 1;
-	bitDelay();
+	wr_data <<= 1;
     digitalWrite(Clkpin,HIGH);
-	bitDelay();
   }
   
 }

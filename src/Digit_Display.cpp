@@ -37,7 +37,12 @@ static int8_t TubeTab[] = {0x3f,0x06,0x5b,0x4f,
                            0x39,0x5e,0x79,0x71};//0~9,A,b,C,d,E,F
 
 
-void Digit_Display::init(uint8_t Bits)
+void Digit_Display::init(void)
+{
+  clearDisplay();
+}
+
+void Digit_Display::digitbits(uint8_t Bits)
 {
   Digitbits = Bits;
 }
@@ -99,7 +104,7 @@ int8_t Digit_Display::coding(int8_t DispData)
   else DispData = TubeTab[DispData] + PointData;
   return DispData;
 }
-void Digit_Display::bitDelay(void)
+void Digit_Display::bitDelay(uint32_t delays)
 {
-	delayMicroseconds(50);
+	delayMicroseconds(delays);
 }
