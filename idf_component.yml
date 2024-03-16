@@ -1,0 +1,8 @@
+description: "Arduino library to control Grove_4Digital_Display TM1637."
+url: "https://github.com/547895019/Grove_Digit_Display.git"
+license: "LGPL-2.1"
+dependencies:
+    arduino/arduino-esp32:
+        public: true
+        git: https://github.com/547895019/arduino-esp32.git
+        version: '3.0.0-alpha2-dev'
